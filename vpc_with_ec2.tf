@@ -15,8 +15,6 @@ provider "aws" {
 resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
 
-  
-
   tags = {
     Name = "my_vpc"
   }
@@ -140,6 +138,18 @@ resource "aws_instance" "ubuntu" {
   #   network_interface_id = aws_network_interface.my_eni.id
   #   device_index = 0
   # }
+
+  user_data = <<-EOF
+
+  #!/bin/bash
+  apt install npm -y
+
+  npm i -g npm@latest
+
+  npm i -g n
+
+  n 18.15.0 
+  EOF
 
   
 
