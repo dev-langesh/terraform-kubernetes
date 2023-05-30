@@ -30,7 +30,7 @@ resource "aws_subnet" "pub-1a" {
 
     availability_zone = "ap-south-1a"
 
-    # auto_assign_ipv4 = true
+    map_public_ip_on_launch = true
 
     tags = {
       Name = "pub-1a"
