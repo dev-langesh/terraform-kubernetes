@@ -36,6 +36,22 @@ resource "aws_subnet" "pub-1a" {
   
 }
 
+resource "aws_subnet" "pub-2b" {
+
+    vpc_id = aws_vpc.my_vpc.id
+
+    cidr_block = var.subnet_pub_2b_cidr
+
+    availability_zone = "ap-south-1b"
+
+    map_public_ip_on_launch = true
+
+    tags = {
+      Name = "pub-2a"
+    }
+  
+}
+
 resource "aws_internet_gateway" "my_igw" {
   
   vpc_id = aws_vpc.my_vpc.id
@@ -61,7 +77,7 @@ resource "aws_route_table" "my_route_table" {
 
 }
 
-resource "aws_route_table_association" "route_table_asso" {
+resource "aws_route_table_association" "route_table_asso1" {
   route_table_id = aws_route_table.my_route_table.id
   subnet_id = aws_subnet.pub-1a.id
 }
@@ -74,6 +90,11 @@ resource "aws_network_interface" "my_eni" {
   tags = {
     Name = "my_eni"
   }
+}
+
+resource "aws_route_table_association" "route_table_asso2" {
+  route_table_id = aws_route_table.my_route_table.id
+  subnet_id = aws_subnet.pub-2b.id
 }
 
 
@@ -177,4 +198,22 @@ resource "aws_volume_attachment" "my_volume_attachment" {
 
   volume_id  = aws_ebs_volume.my_ebs_volume.id
   instance_id = aws_instance.ubuntu.id
+}
+
+
+module "sgs" {
+  source = "./sg_eks"
+
+  vpc_id = aws_vpc.my_vpc.id
+
+}
+
+module "eks" {
+  source = "./eks"
+
+  sg_ids = module.sgs.security_group_public
+
+  vpc_id = aws_vpc.my_vpc.id
+
+  subnet_ids = [aws_subnet.pub-1a.id,aws_subnet.pub-2b.id]
 }

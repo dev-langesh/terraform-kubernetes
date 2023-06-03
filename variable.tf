@@ -25,3 +25,7 @@ variable "vpc_cidr_block" {
 variable "subnet_pub_1a_cidr" {
   default = "10.0.1.0/24"
 }
+
+variable "subnet_pub_2b_cidr" {
+  default = "10.0.10.0/24"
+}
