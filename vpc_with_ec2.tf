@@ -9,11 +9,11 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-  region = "ap-south-1"
+  region = var.region
 }
 
 resource "aws_vpc" "my_vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr_block
 
   tags = {
     Name = "my_vpc"
@@ -24,7 +24,7 @@ resource "aws_subnet" "pub-1a" {
 
     vpc_id = aws_vpc.my_vpc.id
 
-    cidr_block = "10.0.1.0/24"
+    cidr_block = var.subnet_pub_1a_cidr
 
     availability_zone = "ap-south-1a"
 
@@ -125,9 +125,11 @@ resource "aws_security_group" "my_security_group" {
 }
 
 resource "aws_instance" "ubuntu" {
-  ami = "ami-0f5ee92e2d63afc18"
+  ami = var.ami_id
 
-  instance_type = "t2.micro"
+  instance_type = var.instance_type
+
+  key_name = var.key
 
   vpc_security_group_ids = [aws_security_group.my_security_group.id]
 
@@ -161,8 +163,8 @@ resource "aws_instance" "ubuntu" {
 
 # Create EBS volume
 resource "aws_ebs_volume" "my_ebs_volume" {
-  availability_zone = "ap-south-1a"
-  size              = 10 # Size in GB
+  availability_zone = var.ebs_az
+  size              = 20 # Size in GB
 
   tags = {
     Name = "my_ebs_volume"
